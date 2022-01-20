@@ -12,7 +12,9 @@ environment:
 
 dependencies:
   flutter:
+
     sdk: flutter
+
   cloud_firestore: ^3.1.4
   firebase_auth: ^3.3.3
   flutter_chat_types: ^3.2.1

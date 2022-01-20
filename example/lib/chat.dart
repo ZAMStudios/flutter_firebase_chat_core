@@ -1,11 +1,12 @@
 import 'dart:io';
+
+import 'package:example/Library/chat_library/chat_library_widgets/widgets/chat.dart';
+import 'package:example/Library/chat_library/lib/flutter_firebase_chat_core.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
@@ -188,9 +189,57 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        title: const Text('Chat'),
+      appBar:AppBar(
+        elevation: 0.7,
+        toolbarOpacity: 1,
+        backgroundColor: Color(0xFFE6E6E6),
+        title: Container(
+          child: Center(
+            child: Text(
+              widget.room.name.toString(),
+              style: Theme.of(context).textTheme.headline6!.copyWith(
+                  color: Color(0xFF053647),
+                  fontSize: 20,fontWeight: FontWeight.w400
+              ),
+            ),
+          ),
+        ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Color(0xFF053647),
+            size: 28,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        actions: [
+          Row(
+            children: [
+              Container(
+                  margin: EdgeInsets.only(right: 11),
+
+                  width: 20,
+                  height: 20,
+                  child: Image.asset('images/phone.png',color: Color(0xFF22538a),)),
+
+              Container(
+                  margin: EdgeInsets.only(right: 5),
+                  //  color: Colors.yellow,
+                  width: 25,
+                  height: 25,
+                  child: Image.asset('images/menu.png',color: Color(0xFF22538a),))
+              ,  SizedBox(
+                width: 10,
+              ),
+            ],
+          )
+
+
+        ],
+        shape: Border(bottom: BorderSide(color: Color(0xFFF5F5F5), width: 0.7)),
+
       ),
       body: StreamBuilder<types.Room>(
         initialData: widget.room,
