@@ -194,7 +194,7 @@ class _ChatPageState extends State<ChatPage> {
       ),
       body: StreamBuilder<types.Room>(
         initialData: widget.room,
-        stream: FirebaseChatCore.instance.room(widget.room.id),
+        stream: FirebaseChatCore.instance.room('ZXEpeawJhxQjHbHbLQ7tuoXa16B2'),
         builder: (context, snapshot) {
           return StreamBuilder<List<types.Message>>(
             initialData: const [],

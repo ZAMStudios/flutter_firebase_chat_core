@@ -256,23 +256,23 @@ class FirebaseChatCore {
   }
 
   /// Returns a stream of changes in a room from Firebase
-  Stream<types.Room> room(String roomId) {
+  Stream<types.Room> room(String otherUserID) {
     final fu = firebaseUser;
 
     if (fu == null) return const Stream.empty();
 
     return getFirebaseFirestore()
         .collection(config.roomsCollectionName)
-        .doc(roomId)
+        .where('userIds', arrayContains: otherUserID)
         .snapshots()
         .asyncMap(
-          (doc) => processRoomDocument(
-            doc,
-            fu,
-            getFirebaseFirestore(),
-            config.usersCollectionName,
-          ),
-        );
+          (doc) => preProcessRoomDocument(
+        doc.docs,
+        fu,
+        getFirebaseFirestore(),
+        config.usersCollectionName,
+      ),
+    );
   }
 
   /// Returns a stream of rooms from Firebase. Only rooms where current

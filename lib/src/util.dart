@@ -58,6 +58,30 @@ Future<List<types.Room>> processRoomsQuery(
   return await Future.wait(futures);
 }
 
+Future<types.Room> preProcessRoomDocument(
+  List<DocumentSnapshot<Map<String, dynamic>>> doc,
+  User firebaseUser,
+  FirebaseFirestore instance,
+  String usersCollectionName,
+) {
+  DocumentSnapshot<Map<String, dynamic>> docNew = doc.first;
+  for (int i = 0; i < doc.length; i++) {
+    final data = doc[i].data()!;
+    final userIds = data['userIds'] as List<dynamic>;
+
+    if (userIds.contains(firebaseUser.uid)) {
+      docNew = doc[i];
+      break;
+    }
+  }
+  return processRoomDocument(
+    docNew,
+    firebaseUser,
+    instance,
+    usersCollectionName,
+  );
+}
+
 /// Returns a [types.Room] created from Firebase document
 Future<types.Room> processRoomDocument(
   DocumentSnapshot<Map<String, dynamic>> doc,
