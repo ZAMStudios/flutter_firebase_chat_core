@@ -63,22 +63,71 @@ Future<types.Room> preProcessRoomDocument(
   User firebaseUser,
   FirebaseFirestore instance,
   String usersCollectionName,
+  String otherUserID,
 ) {
-  DocumentSnapshot<Map<String, dynamic>> docNew = doc.first;
-  for (int i = 0; i < doc.length; i++) {
-    final data = doc[i].data()!;
-    final userIds = data['userIds'] as List<dynamic>;
+  if (doc.isNotEmpty) {
+    DocumentSnapshot<Map<String, dynamic>> docNew = doc.first;
 
-    if (userIds.contains(firebaseUser.uid)) {
-      docNew = doc[i];
-      break;
+    for (int i = 0; i < doc.length; i++) {
+      final data = doc[i].data()!;
+      final userIds = data['userIds'] as List<dynamic>;
+
+      if (userIds.contains(firebaseUser.uid)) {
+        docNew = doc[i];
+        break;
+      }
     }
+
+    return processRoomDocument(
+      docNew,
+      firebaseUser,
+      instance,
+      usersCollectionName,
+    );
+  } else {
+    return createRoom(instance, firebaseUser, otherUserID);
   }
-  return processRoomDocument(
-    docNew,
-    firebaseUser,
+}
+
+Future<types.Room> createRoom(
+  FirebaseFirestore instance,
+  User cUser,
+  String otherUserID, {
+  Map<String, dynamic>? metadata,
+}) async {
+  final currentUser = await fetchUser(
     instance,
-    usersCollectionName,
+    cUser.uid,
+    'users',
+  );
+
+  final otherUser = await fetchUser(
+    instance,
+    otherUserID,
+    'users',
+  );
+
+  final users = [
+    types.User.fromJson(currentUser),
+    types.User.fromJson(otherUser)
+  ];
+
+  final room = await instance.collection('rooms').add({
+    'createdAt': FieldValue.serverTimestamp(),
+    'imageUrl': null,
+    'metadata': metadata,
+    'name': null,
+    'type': types.RoomType.direct.toShortString(),
+    'updatedAt': FieldValue.serverTimestamp(),
+    'userIds': users.map((u) => u.id).toList(),
+    'userRoles': null,
+  });
+
+  return types.Room(
+    id: room.id,
+    metadata: metadata,
+    type: types.RoomType.direct,
+    users: users,
   );
 }
 
