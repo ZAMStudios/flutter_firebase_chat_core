@@ -66,6 +66,7 @@ Future<types.Room> preProcessRoomDocument(
   String otherUserID,
 ) {
   if (doc.isNotEmpty) {
+    print('user has chats');
     DocumentSnapshot<Map<String, dynamic>> docNew = doc.first;
 
     for (int i = 0; i < doc.length; i++) {
@@ -74,6 +75,8 @@ Future<types.Room> preProcessRoomDocument(
 
       if (userIds.contains(firebaseUser.uid)) {
         docNew = doc[i];
+        print('user found chats');
+
         break;
       }
     }
@@ -95,6 +98,8 @@ Future<types.Room> createRoom(
   String otherUserID, {
   Map<String, dynamic>? metadata,
 }) async {
+  print('createRoom calls');
+
   final currentUser = await fetchUser(
     instance,
     cUser.uid,
@@ -111,6 +116,7 @@ Future<types.Room> createRoom(
     types.User.fromJson(currentUser),
     types.User.fromJson(otherUser)
   ];
+  print('users created');
 
   final room = await instance.collection('rooms').add({
     'createdAt': FieldValue.serverTimestamp(),
@@ -122,6 +128,8 @@ Future<types.Room> createRoom(
     'userIds': users.map((u) => u.id).toList(),
     'userRoles': null,
   });
+
+  print('room created');
 
   return types.Room(
     id: room.id,
