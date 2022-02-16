@@ -67,7 +67,7 @@ Future<types.Room> preProcessRoomDocument(
 ) {
   if (doc.isNotEmpty) {
     print('user has chats');
-    DocumentSnapshot<Map<String, dynamic>> docNew = doc.first;
+    DocumentSnapshot<Map<String, dynamic>>? docNew;
 
     for (int i = 0; i < doc.length; i++) {
       final data = doc[i].data()!;
@@ -80,7 +80,9 @@ Future<types.Room> preProcessRoomDocument(
         break;
       }
     }
-
+    if (docNew == null) {
+      return createRoom(instance, firebaseUser, otherUserID);
+    }
     return processRoomDocument(
       docNew,
       firebaseUser,
