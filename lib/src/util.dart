@@ -71,8 +71,8 @@ Future<types.Room> preProcessRoomDocument(
 
     for (int i = 0; i < doc.length; i++) {
       final data = doc[i].data()!;
-      final userIds = data['userIds'] as List<dynamic>;
-
+      final userIds = data['userIds'] as List<String>;
+      print('current user id is ${firebaseUser.uid}');
       if (userIds.contains(firebaseUser.uid)) {
         docNew = doc[i];
         print('user found chats');
