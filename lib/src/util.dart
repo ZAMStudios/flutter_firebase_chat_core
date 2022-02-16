@@ -64,7 +64,7 @@ Future<types.Room> preProcessRoomDocument(
   FirebaseFirestore instance,
   String usersCollectionName,
   String otherUserID,
-) {
+) async {
   if (doc.isNotEmpty) {
     print('user has chats');
     DocumentSnapshot<Map<String, dynamic>>? docNew;
@@ -81,7 +81,10 @@ Future<types.Room> preProcessRoomDocument(
       }
     }
     if (docNew == null) {
-      return createRoom(instance, firebaseUser, otherUserID);
+      print('no chat found with current user');
+      var doc = await createRoom(instance, firebaseUser, otherUserID);
+      print('after creating room ${doc.id}');
+      return doc;
     }
     return processRoomDocument(
       docNew,
@@ -90,7 +93,7 @@ Future<types.Room> preProcessRoomDocument(
       usersCollectionName,
     );
   } else {
-    return createRoom(instance, firebaseUser, otherUserID);
+    return await createRoom(instance, firebaseUser, otherUserID);
   }
 }
 
